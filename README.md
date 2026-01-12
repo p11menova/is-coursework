@@ -1,8 +1,8 @@
-## Агрегатор новостного контента пользователя
-
----
+# Агрегатор новостного контента пользователя
 
 курсовая работа по предмету Информационные Системы 😊
+
+## этап 1. идея и требования к разработке продукта 
 
 ## <span style="color:#C3A9FD"> Software Requirements Specification</span>
 
@@ -174,3 +174,281 @@ U3.3 Система должна предоставлять поддержива
 3.6.3 Лицензия на медиа
 
 * Сайт обязуется иметь и соблюдать лицензионное соглашение на не принадлежащие ему медиа, используемые на сайте.
+
+## этап 2. проектирование базы данных
+
+## <span style="color:#C3A9FD">er-модель базы данных</span> 
+
+![er_model.png](readme_resources/er_model.png)
+
+## <span style="color:#C3A9FD">даталогическая модель базы данных</span>
+
+![datalogical_model.png](readme_resources/datalogical_model.png)
+## <span style="color:#C3A9FD">SQL скрипты</span>
+
+### <span style="color:#C3A9FD">создание БД и таблиц</span> 
+
+```sql
+SELECT 'CREATE DATABASE news_aggregator' WHERE NOT EXISTS (
+    SELECT FROM pg_database WHERE datname = 'news_aggregator'
+)
+
+-- Установить контекст для созданной БД
+\c news_aggregator
+
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT
+);
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE CHECK (
+        email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$'
+    ),
+    password_hash CHAR(60) NOT NULL, -- Хэш пароля
+    created_date TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE verification_codes (
+    code_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    code_hash VARCHAR(255) NOT NULL,
+    expires_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    -- Ограничение: один активный код на пользователя
+    UNIQUE (user_id)
+);
+
+CREATE TABLE sources (
+    source_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    url VARCHAR(500) NOT NULL UNIQUE
+);
+
+CREATE TABLE source_categories (
+    source_id INTEGER NOT NULL REFERENCES sources(source_id) ON DELETE CASCADE,
+    category_id INTEGER NOT NULL REFERENCES categories(category_id) ON DELETE CASCADE,
+    PRIMARY KEY (source_id, category_id)
+);
+
+CREATE TABLE templates (
+    template_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    category_id INTEGER REFERENCES categories(category_id) ON DELETE SET NULL
+);
+
+CREATE TABLE template_sources (
+    template_id INTEGER NOT NULL REFERENCES templates(template_id) ON DELETE CASCADE,
+    source_id INTEGER NOT NULL REFERENCES sources(source_id) ON DELETE CASCADE,
+    PRIMARY KEY (template_id, source_id)
+);
+
+CREATE TABLE user_templates (
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    template_id INTEGER NOT NULL REFERENCES templates(template_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, template_id)
+);
+
+CREATE TABLE user_sources (
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    source_id INTEGER NOT NULL REFERENCES sources(source_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, source_id)
+);
+
+CREATE TABLE news (
+    news_id SERIAL PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    content TEXT NOT NULL,
+    url VARCHAR(500) UNIQUE NOT NULL, -- Ссылка на оригинал
+    image_url VARCHAR(500),
+    published_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    source_id INTEGER NOT NULL REFERENCES sources(source_id) ON DELETE RESTRICT,
+    category_id INTEGER NOT NULL REFERENCES categories(category_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE user_news (
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    news_id INTEGER NOT NULL REFERENCES news(news_id) ON DELETE CASCADE,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (user_id, news_id)
+);
+```
+
+### <span style="color:#C3A9FD">наполнение БД тестовыми данными</span>
+```sql
+INSERT INTO categories (name, description) VALUES
+('IT', 'Новости технологий, гаджетов и др.'),
+('Спорт', 'Футбол, хоккей, баскетбол и др.'),
+('Финансы', 'Фондовый рынок, валюты, экономика и др.'),
+('Политика', 'Государственные, международные новости и др.');
+
+-- Вставка данных в users (пароли для примера, в реальной системе нужен хэш)
+INSERT INTO users (login, email, password_hash) VALUES
+('ivanov', 'ivanov@example.com', '$2a$10$T8.uQGZ2i7P7D0Yy6Hl.fuiU1/nQ1Fq/x2tB/sR.B.zU2/H6'), -- Хэш
+('petrov', 'petrov@example.com', '$2a$10$T8.uQGZ2i7P7D0Yy6Hl.fuiU1/nQ1Fq/x2tB/sR.B.zU2/H6');
+
+-- Вставка данных в sources (Используем category_id из предыдущего шага)
+INSERT INTO sources (source_id, name, url) VALUES
+(1, 'TechToday', 'https://techtoday.com'),
+(2, 'SportsWorld', 'https://sportsworld.com'),
+(3, 'FinReport', 'https://finreport.ru');
+
+-- Установка M:N: source_categories (TechToday относится и к IT, и к Финансам)
+INSERT INTO source_categories (source_id, category_id) VALUES
+(1, 1), -- TechToday -> IT
+(1, 3); -- TechToday -> Финансы
+
+
+INSERT INTO news (title, content, url, published_date, source_id, category_id) VALUES
+('Новый чип установлен', 'Детали о новом процессоре...', 'https://techtoday.com/chip-2025', '2025-10-18 10:00:00', 1, 1),
+('Футбол: Результаты матча', 'Счет 3:1 в пользу хозяев.', 'https://sportsworld.com/match-result', '2025-10-18 11:30:00', 2, 2),
+('Биржа: Рост акций IT-сектора', 'Анализ роста после отчетов.', 'https://finreport.ru/it-stocks', '2025-10-18 12:45:00', 3, 3),
+('IT: Прогноз на ИИ в 2026', 'Эксперты предсказывают...', 'https://techtoday.com/ai-forecast', '2025-10-18 14:00:00', 1, 1);
+
+INSERT INTO user_sources (user_id, source_id) VALUES
+(1, 1), -- Иванов подписан на TechToday
+(1, 2), -- Иванов подписан на SportsWorld
+(2, 3); -- Петров подписан на FinReport
+
+INSERT INTO user_news (user_id, news_id, viewed_date, is_read) VALUES
+(1, 1, '2025-10-18 15:00:00', TRUE), -- Иванов прочитал 1 новость
+(1, 2, NULL, FALSE); -- Иванов еще не прочитал 2 новость
+
+```
+
+### <span style="color:#C3A9FD">удаление БД</span>
+```sql
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'news_aggregator' AND pid <> pg_backend_pid();
+-- Удаление базы данных
+DROP DATABASE IF EXISTS news_aggregator;
+```
+
+
+
+### <span style="color:#C3A9FD">PL/PSQL процедуры для выполнения критически важных запросов</span>
+```sql
+-- Процедура для подписки пользователя
+CREATE OR REPLACE FUNCTION subscribe_user_to_source(
+    p_user_id INTEGER,
+    p_source_id INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    -- 1. Проверка существования пользователя и источника
+    IF NOT EXISTS (SELECT 1 FROM users WHERE user_id = p_user_id) THEN
+        RAISE EXCEPTION 'Пользователь с ID % не найден.', p_user_id;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM sources WHERE source_id = p_source_id) THEN
+        RAISE EXCEPTION 'Источник с ID % не найден.', p_source_id;
+    END IF;
+
+    -- 2. Добавление подписки. ON CONFLICT DO NOTHING предотвратит ошибку
+    -- при повторной подписке и обеспечит идемпотентность.
+    INSERT INTO user_sources (user_id, source_id)
+    VALUES (p_user_id, p_source_id)
+    ON CONFLICT (user_id, source_id) DO NOTHING;
+    -- Сохранение изменений
+    COMMIT;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Функция для проверки кода восстановления и возврата ID пользователя
+CREATE OR REPLACE FUNCTION verify_reset_code(
+    p_email VARCHAR,
+    p_code_hash VARCHAR -- Входящий хэш кода, присланного пользователю
+)
+RETURNS INTEGER AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    -- 1. Поиск пользователя по email
+    SELECT u.user_id INTO v_user_id
+    FROM users u
+    JOIN verification_codes vc ON u.user_id = vc.user_id
+    WHERE u.email = p_email AND vc.code_hash = p_code_hash;
+
+    -- Если пользователь/код не найден
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Неверный email или код восстановления.';
+    END IF;
+
+    -- 2. Проверка времени жизни кода 
+    IF EXISTS (SELECT 1 FROM verification_codes WHERE user_id = v_user_id AND expires_time < CURRENT_TIMESTAMP) THEN
+        -- Удалить просроченный код
+        DELETE FROM verification_codes WHERE user_id = v_user_id;
+        RAISE EXCEPTION 'Код восстановления просрочен.';
+    END IF;
+
+    -- 3. Если все успешно, удалить код, чтобы его нельзя было использовать повторно
+    DELETE FROM verification_codes WHERE user_id = v_user_id;
+
+    -- Возврат ID пользователя для последующей смены пароля
+    RETURN v_user_id;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+
+### <span style="color:#C3A9FD">индексы БД</span>
+**индекс для поиска источников по категориям**
+```sql
+CREATE INDEX idx_source_categories_category ON source_categories(category_id);
+```
+**индекс для поиска всех источников конкретного пользователя**
+```sql
+CREATE INDEX idx_users_sources ON sources(user_id);
+```
+
+
+### <span style="color:#C3A9FD">триггеры</span>
+**триггер для удаления старых кодов верификации для конкретного пользователя** 
+```sql
+CREATE OR REPLACE FUNCTION cleanup_old_verification_codes()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Удаление всех старых кодов для данного пользователя, прежде чем вставить новый.
+    DELETE FROM verification_codes
+    WHERE user_id = NEW.user_id;
+
+    -- Возврат NEW разрешает выполнение текущего INSERT
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Триггер срабатывает перед вставкой в таблицу verification_codes
+CREATE TRIGGER before_insert_verification_code
+BEFORE INSERT ON verification_codes
+FOR EACH ROW
+EXECUTE FUNCTION cleanup_old_verification_codes();
+```
+
+
+
+**триггер для каскадного удаления связанных записей в таблицах связей**
+```sql
+CREATE OR REPLACE FUNCTION delete_user_related_data()
+RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM user_news WHERE user_id = OLD.user_id;
+    DELETE FROM user_sources WHERE user_id = OLD.user_id;
+    DELETE FROM user_templates WHERE user_id = OLD.user_id;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_delete_user_relations
+AFTER DELETE ON users
+FOR EACH ROW
+EXECUTE FUNCTION delete_user_related_data();
+;
+```
+
+
