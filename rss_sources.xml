@@ -1,0 +1,352 @@
+список rss-источников
+
+1. https://habr.com/ru/rss/articles/
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+<channel>
+<title>
+<![CDATA[ Все публикации подряд на Хабре ]]>
+</title>
+<link>https://habr.com/ru/articles/</link>
+<description>
+<![CDATA[ Все публикации подряд на Хабре ]]>
+</description>
+<language>ru</language>
+<managingEditor>editor@habr.com</managingEditor>
+<generator>habr.com</generator>
+<pubDate>Mon, 15 Sep 2025 18:04:34 GMT</pubDate>
+<image>
+<link>https://habr.com/ru/</link>
+<url>https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png</url>
+<title>Хабр</title>
+</image>
+
+<item>
+<title>
+<![CDATA[ [Перевод] Облачные вычисления в 2025 году: рост ИИ приводит к революции на рынке объемом $723 млрд ]]>
+</title>
+<guid isPermaLink="true">https://habr.com/ru/companies/hstx/articles/947190/</guid>
+<link>https://habr.com/ru/companies/hstx/articles/947190/?utm_source=habrahabr&utm_medium=rss&utm_campaign=947190</link>
+<description>
+<![CDATA[ <img src="https://habrastorage.org/getpro/habr/upload_files/857/600/150/857600150d452eb62c89601045b2994c.webp" /><p><em>Перевод </em><a href="https://medium.com/@patrickkoss/cloud-computing-in-2025-ai-surge-drives-723-billion-market-revolution-c6d400bd139f" rel="noopener noreferrer nofollow"><em>статьи</em></a><em> Патрика Косса о том, как ИИ, edge-компьютинг, serverless и мультиоблачные стратегии меняют облачную инфраструктуру. Автор подчеркивает, что речь идет не о постепенной эволюции, а о настоящей трансформации, которая уже влияет на стратегию крупнейших компаний и задаёт новые правила игры.</em></p><p>Индустрия облачных вычислений переживает свой самый трансформационный период: интеграция искусственного интеллекта стимулирует беспрецедентный рост и меняет то, как компании подходят к цифровой инфраструктуре.</p><p>Новые данные показывают, что глобальные расходы на публичные облачные сервисы достигнут $723,4 млрд в 2025 году, что составляет рост на 21% по сравнению с $595,7 млрд в 2024 году.</p><p>Этот всплеск связан с тем, что всё больше организаций обращаются к облачным сервисам с поддержкой ИИ: уже 72% компаний используют платформы генеративного ИИ, и эта тенденция кардинально меняет распределение ресурсов и стратегические приоритеты в разных отраслях.</p> <a href="https://habr.com/ru/articles/947190/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=947190#habracut">Читать далее</a> ]]>
+</description>
+<pubDate>Mon, 15 Sep 2025 18:01:23 GMT</pubDate>
+<dc:creator>
+<![CDATA[ hstx_team (Хайстекс) ]]>
+</dc:creator>
+<category>хранилище</category>
+<category>хранилище данных</category>
+<category>бэкап</category>
+<category>восстановление данных</category>
+<category>репликация</category>
+<category>rto</category>
+<category>отказоустойчивость</category>
+<category>облако</category>
+<category>edge</category>
+<category>serverless</category>
+</item>
+</channel>
+
+
+2. https://lenta.ru/rss/google-newsstand/main/
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lenta.ru</title>
+    <link>https://lenta.ru</link>
+    <description>Новости, статьи, фотографии, видео. Семь дней в неделю, 24 часа в сутки.</description>
+    <language>ru</language>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com"/>
+    <atom:link rel="self" href="https://lenta.ru/rss/google-newsstand/main"/>
+<item>
+  <title>Несколько стран присоединятся к инициативе НАТО</title>
+  <link>https://lenta.ru/news/2025/09/15/neskolko-stran-prisoedinyatsya-k-initsiative-nato/</link>
+  <guid>https://lenta.ru/news/2025/09/15/neskolko-stran-prisoedinyatsya-k-initsiative-nato/</guid>
+  <pubDate>Mon, 15 Sep 2025 23:07:02 +0300</pubDate>
+  <category>Мир</category>
+  <dc:creator>Евгений Силаев</dc:creator>
+  <description/>
+  <content:encoded>
+    <![CDATA[<p>Четыре страны (<a href="/tags/geo/ispaniya/" target="_blank">Испания</a>, <a href="/tags/geo/italiya/" target="_blank">Италия</a>, <a href="/tags/geo/velikobritaniya/" target="_blank">Великобритания</a> и <a href="/tags/geo/shvetsiya/" target="_blank">Швеция</a>) заявили о планах присоединиться к инициативе <a href="/tags/organizations/nato/" target="_blank">Североатлантического альянса</a> «Восточный страж». Об этом говорится на <a href="https://www.nato.int/cps/ru/natohq/index.htm" rel="nofollow" target="_blank">сайте</a> НАТО.</p>
+<p>«<a href="/tags/geo/daniya/" target="_blank">Дания</a> предоставит истребители и фрегат противовоздушной обороны, а Испания и Великобритания вскоре объявят о своей поддержке. Италия и Швеция также дали понять, что окажут помощь», — говорится в сообщении.</p>
+<p>Отмечается, что в рамках инициативы прибыли три вертолета из <a href="/tags/geo/chehiya/" target="_blank">Чехии</a>. Также <a href="/tags/geo/germaniya/" target="_blank">Германия</a> выделила четыре истребителя Eurofighter.</p>
+<p>Ранее <a href="https://lenta.ru/news/2025/09/13/strazh/" target="_blank">стало известно</a>, что в <a href="/tags/geo/polsha/" target="_blank">Польше</a> запущена операция НАТО под названием «Восточный страж». Ее целью стало усиление обороны восточного фланга на фоне массового прилета беспилотников на польскую территорию.</p>
+]]>
+  </content:encoded>
+  <media:content url="https://icdn.lenta.ru/images/2025/09/15/23/20250915230633226/original_a3f670d2869ef1d30558601729e96f53.jpg">
+    <media:thumbnail url="https://icdn.lenta.ru/images/2025/09/15/23/20250915230659547/announce_2835f6a7405d597a301e0bb3ace29343.jpg"/>
+    <media:credit>Фото: Johanna Geron / Reuters</media:credit>
+    <media:title/>
+    <media:text/>
+  </media:content>
+</item>
+</channel>
+
+3. https://www.drom.ru/cached_files/xml/news.rss
+
+<rss version="2.0">
+<channel xmlns:dc="http://purl.org/dc/elements/1.1/">
+<title>Drom.ru: Новости</title>
+<link>https://www.drom.ru/</link>
+<description>Новости из мира автомобилей на Drom.ru</description>
+<dc:date>2025-09-16T06:29:00+10:00</dc:date>
+<image>
+<url>https://images.drom.ru/img/drom_88x31.gif</url>
+<title>Drom.ru: Новости</title>
+<link>https://www.drom.ru/</link>
+</image>
+<item>
+<title>
+<![CDATA[ Toyota представила серийную версию малого электробуса e-Palette ]]>
+</title>
+<link>https://news.drom.ru/Toyota-e-Palette-100765.html</link>
+<description>
+<![CDATA[ Toyota Motor 15 сентября представила в Японии предсерийный вариант автобуса малого класса e-Palette. ]]>
+</description>
+<guid>https://news.drom.ru/Toyota-e-Palette-100765.html</guid>
+<pubDate>Tue, 16 Sep 2025 01:14:06 +1100</pubDate>
+<category>Авто</category>
+</item>
+</channel>
+
+
+
+4. https://feeds.bbci.co.uk/news/rss.xml
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+<channel>
+<title>
+<![CDATA[ BBC News ]]>
+</title>
+<description>
+<![CDATA[ BBC News - News Front Page ]]>
+</description>
+<link>https://www.bbc.co.uk/news</link>
+<image>
+<url>https://news.bbcimg.co.uk/nol/shared/img/bbc_news_120x60.gif</url>
+<title>BBC News</title>
+<link>https://www.bbc.co.uk/news</link>
+</image>
+<generator>RSS for Node</generator>
+<lastBuildDate>Mon, 15 Sep 2025 20:50:30 GMT</lastBuildDate>
+<atom:link href="https://feeds.bbci.co.uk/news/rss.xml" rel="self" type="application/rss+xml"/>
+<copyright>
+<![CDATA[ Copyright: (C) British Broadcasting Corporation, see https://www.bbc.co.uk/usingthebbc/terms-of-use/#15metadataandrssfeeds for terms and conditions of reuse. ]]>
+</copyright>
+<language>
+<![CDATA[ en-gb ]]>
+</language>
+<ttl>15</ttl>
+<item>
+<title>
+<![CDATA[ Constance Marten and Mark Gordon jailed for 14 years over baby's death ]]>
+</title>
+<description>
+<![CDATA[ The couple were found guilty in July after a lengthy retrial at the Old Bailey. ]]>
+</description>
+<link>https://www.bbc.com/news/articles/c931yq8lz19o?at_medium=RSS&at_campaign=rss</link>
+<guid isPermaLink="false">https://www.bbc.com/news/articles/c931yq8lz19o#0</guid>
+<pubDate>Mon, 15 Sep 2025 16:31:04 GMT</pubDate>
+<media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/8782/live/8a8d07b0-9251-11f0-b391-6936825093bd.jpg"/>
+</item>
+
+5. https://ria.ru/export/rss2/archive/index.xml
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:rambler="http://news.rambler.ru" xmlns:mailru="http://news.mail.ru/" version="2.0">
+<channel>
+<title>РИА Новости</title>
+<link>https://ria.ru</link>
+<language>ru</language>
+<copyright>RIA Novosti</copyright>
+<item>
+<title>В Греции конфисковали более двух тысяч контейнеров с китайскими товарами</title>
+<link>https://ria.ru/20250915/evrosoyuz-2042121537.html</link>
+<guid>https://ria.ru/20250915/evrosoyuz-2042121537.html</guid>
+<rian:priority xmlns:rian="http://rian.ru/ns">3</rian:priority>
+<pubDate>Mon, 15 Sep 2025 23:52:40 +0300</pubDate>
+<rian:type xmlns:rian="http://rian.ru/ns">article</rian:type>
+<category>Лента новостей</category>
+<enclosure url="https://cdnn21.img.ria.ru/images/07e6/08/1d/1812874132_0:0:3038:1709_650x0_80_0_0_363e56a3dd5eb222686cc0d0a3a25bcd.jpg.webp" type="image/jpeg"/>
+</item>
+</channel>
+
+6. https://www.kolesa.ru/export/rss.xml
+
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" version="2.0">
+<channel>
+<title>КОЛЕСА.ру – автоновости, тест-драйвы, каталог авто, отзывы, дилеры, общение</title>
+<link>https://www.kolesa.ru</link>
+<language>ru</language>
+<atom:link rel="self" type="application/rss+xml" href="https://www.kolesa.ru/export/rss.xml"/>
+<item>
+<guid>https://www.kolesa.ru/news/jaguar-land-rover-terpit-bedstvie-v-rezultate-kiberataki-i-zdet-pomoshhi-ot-gosudarstva</guid>
+<title>Jaguar Land Rover терпит бедствие в результате кибератаки и ждёт помощи от государства</title>
+<link>https://www.kolesa.ru/news/jaguar-land-rover-terpit-bedstvie-v-rezultate-kiberataki-i-zdet-pomoshhi-ot-gosudarstva</link>
+<pdalink>https://www.kolesa.ru/news/jaguar-land-rover-terpit-bedstvie-v-rezultate-kiberataki-i-zdet-pomoshhi-ot-gosudarstva</pdalink>
+<pubDate>Mon, 15 Sep 2025 20:07:12 +0300</pubDate>
+<enclosure url="https://kolesa-uploads.ru/-/234d5372-b288-4610-a8db-59022ba30659/0-0.jpg" type="image/jpeg" length="374173"/>
+<category>native-yes</category>
+<description>
+<![CDATA[ Уже третью неделю британская компания Jaguar Land Rover (JLR) не выпускает и не продаёт автомобили — таков печальный итог взлома её компьютерных систем киберпреступниками, восстановить работу пока не удаётся. ]]>
+</description>
+	<content:encoded>
+<![CDATA[ <p>Уже третью неделю британская компания Jaguar Land Rover (JLR) не выпускает и не продаёт автомобили — таков печальный итог взлома её компьютерных систем киберпреступниками, восстановить работу пока не удаётся.</p> <p>Первая информация о том, что компанию JLR взломали, появилась в британской прессе 1 сентября — об этом в частности сообщал журнал Autocar. Обычно такого рода инциденты проходят незамеченными, потому что последствия взлома удаётся быстро нейтрализовать. К сожалению, случай JLR оказался нетипичным: уже третью неделю компания буквально лежит, заводы не работают, дилеры не могут продавать машины, разрушена вся система внутренней коммуникации. На сайте JLR висит лаконичное объявление о том, что компания круглосуточно работает над решением проблемы.</p> <p>Помнится, недавно очень разрушительной кибератаке подверглась одна известная российская сеть алкомаркетов: ущерб оказался настолько велик, что работу удалось возобновить лишь через месяц. Автомобильная компания — намного более сложная история, её работа завязана не только на дилеров, но и на тысячи поставщиков, выпускающих огромную номенклатуру комплектующих. Остановка JLR автоматически оставила без работы многих поставщиков, то есть возник каскад кризисов, затрагивающий десятки тысяч, если не сотни тысяч рабочих, в связи с чем в ситуацию пришлось вмешаться британскому правительству.</p><p>На данный момент, как сообщает тот же Autocar, на уровне министерств разрабатываются меры субсидирования зарплат пострадавшим от кибератаки сотрудникам на период восстановления, иначе уже начались бы увольнения, что означало бы не виртуальное, а физическое разрушение цепочек поставок. В худшем случае, как заявил бывший гендиректор Aston Martin Энди Палмер, комментируя всю эту неприятную историю, нельзя исключать банкротства JLR.</p><p>Ответственность за атаку на JLR взяла на себя группировка хакеров, имя которой мы называть не будем, отметим лишь, что не названа цель этого взлома, кроме, собственно, самого взлома. Разумеется, ведётся официальное расследование этого инцидента, следственный действия создают свою нервотрёпку внутри компании, айтишники тратят много времени на общение с полицией, параллельно пытаясь реанимировать цифровую экосистему JLR. Сколько на это уйдёт времени, пока непонятно.</p> <p>Напомним, что и без кибератаки JLR сейчас находится в нелёгком положении из-за глобального замедления спроса на электромобили и выпавшей на время из бизнеса марки Jaguar, которая находится в процессе очень рискованного перезапуска. В августе в JLR сменился гендиректор: на смену британцу Адриану Марделлу пришёл ставленник материнской индийской компании Tata Motors П. Б. Баладжи, едва ли он ожидал, что будет принимать бразды правления при форс-мажорных обстоятельствах.</p> ]]>
+	</content:encoded>
+</item>
+</channel>
+
+7. https://www.championat.com/rss/news/
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Чемпионат.com - Новости спорта</title>
+<link>https://www.championat.com</link>
+<description>Актуальные новости спорта: футбол, хоккей, баскетбол, теннис и другие виды спорта</description>
+<language>ru</language>
+<atom:link href="https://www.championat.com/rss/news.xml" rel="self" type="application/rss+xml"/>
+<item>
+<title>Москвичи разгромили соперников в матче чемпионата</title>
+<link>https://www.championat.com/football/news-1234567.html</link>
+<guid>https://www.championat.com/football/news-1234567.html</guid>
+<pubDate>Mon, 15 Sep 2025 20:30:00 +0300</pubDate>
+<category>Футбол</category>
+<description>
+<![CDATA[ Столичный клуб одержал уверенную победу в домашнем матче чемпионата страны, забив три безответных гола. ]]>
+</description>
+</item>
+</channel>
+
+8. https://rssexport.rbc.ru/rbcnews/news/30/full.rss
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>РБК - Финансы</title>
+<link>https://www.rbc.ru/finances</link>
+<description>Новости финансов, экономики, фондового рынка и бизнеса</description>
+<language>ru</language>
+<atom:link href="https://www.rbc.ru/rss/finances.xml" rel="self" type="application/rss+xml"/>
+<item>
+<title>Рубль укрепился к доллару на фоне роста цен на нефть</title>
+<link>https://www.rbc.ru/finances/15/09/2025/67890abcdef</link>
+<guid>https://www.rbc.ru/finances/15/09/2025/67890abcdef</guid>
+<pubDate>Mon, 15 Sep 2025 19:15:00 +0300</pubDate>
+<category>Финансы</category>
+<description>
+<![CDATA[ Российская валюта показала рост на торгах Московской биржи после повышения котировок нефти марки Brent выше отметки $85 за баррель. ]]>
+</description>
+</item>
+</channel>
+
+9. https://nplus1.ru/rss
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>N+1 - Научные новости</title>
+<link>https://nplus1.ru</link>
+<description>Научные новости, статьи и исследования в области физики, биологии, медицины и технологий</description>
+<language>ru</language>
+<atom:link href="https://nplus1.ru/rss" rel="self" type="application/rss+xml"/>
+<item>
+<title>Ученые обнаружили новый механизм регенерации клеток</title>
+<link>https://nplus1.ru/news/2025/09/15/cell-regeneration</link>
+<guid>https://nplus1.ru/news/2025/09/15/cell-regeneration</guid>
+<pubDate>Mon, 15 Sep 2025 18:45:00 +0300</pubDate>
+<category>Биология</category>
+<description>
+<![CDATA[ Исследователи из российского института выявили ранее неизвестный механизм восстановления поврежденных клеток, который может открыть новые возможности в лечении травм и заболеваний. ]]>
+</description>
+</item>
+</channel>
+
+10. https://www.kinopoisk.ru/news.rss
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Кинопоиск - Новости кино</title>
+<link>https://www.kinopoisk.ru/media</link>
+<description>Новости киноиндустрии, рецензии на фильмы, интервью с актерами и режиссерами</description>
+<language>ru</language>
+<atom:link href="https://www.kinopoisk.ru/media/rss/" rel="self" type="application/rss+xml"/>
+<item>
+<title>Премьера нового блокбастера собрала рекордную кассу</title>
+<link>https://www.kinopoisk.ru/media/news/12345</link>
+<guid>https://www.kinopoisk.ru/media/news/12345</guid>
+<pubDate>Mon, 15 Sep 2025 17:20:00 +0300</pubDate>
+<category>Кино</category>
+<description>
+<![CDATA[ Новый фильм известного режиссера установил рекорд по сборам в первый уикенд проката, собрав более миллиарда рублей в российских кинотеатрах. ]]>
+</description>
+</item>
+</channel>
+
+11. https://tproger.ru/feed/
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Tproger - Новости программирования</title>
+<link>https://tproger.ru</link>
+<description>Новости IT, программирования, разработки и технологий</description>
+<language>ru</language>
+<atom:link href="https://tproger.ru/feed/" rel="self" type="application/rss+xml"/>
+<item>
+<title>Новый фреймворк для веб-разработки вышел в релиз</title>
+<link>https://tproger.ru/news/new-framework-release</link>
+<guid>https://tproger.ru/news/new-framework-release</guid>
+<pubDate>Mon, 15 Sep 2025 16:10:00 +0300</pubDate>
+<category>Разработка</category>
+<description>
+<![CDATA[ Разработчики представили новую версию популярного фреймворка с улучшенной производительностью и новыми возможностями. ]]>
+</description>
+</item>
+</channel>
+
+14. https://www.sport-express.ru/services/materials/news/se/
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Спорт-Экспресс - Спортивные новости</title>
+<link>https://www.sport-express.ru</link>
+<description>Новости спорта: футбол, хоккей, теннис, баскетбол и другие виды спорта</description>
+<language>ru</language>
+<atom:link href="https://www.sport-express.ru/rss/news.xml" rel="self" type="application/rss+xml"/>
+<item>
+<title>Сборная одержала победу в отборочном матче</title>
+<link>https://www.sport-express.ru/football/news/victory-12345</link>
+<guid>https://www.sport-express.ru/football/news/victory-12345</guid>
+<pubDate>Mon, 15 Sep 2025 14:15:00 +0300</pubDate>
+<category>Футбол</category>
+<description>
+<![CDATA[ Национальная сборная уверенно победила в матче отборочного турнира, забив два гола и не пропустив ни одного. ]]>
+</description>
+</item>
+</channel>
+
+15. https://www.vedomosti.ru/rss/news
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Ведомости - Экономика и финансы</title>
+<link>https://www.vedomosti.ru</link>
+<description>Новости экономики, финансов, бизнеса и рынков</description>
+<language>ru</language>
+<atom:link href="https://www.vedomosti.ru/rss/news" rel="self" type="application/rss+xml"/>
+<item>
+<title>Биржевые индексы показали рост на закрытии торгов</title>
+<link>https://www.vedomosti.ru/finance/news/2025/09/15/market-growth</link>
+<guid>https://www.vedomosti.ru/finance/news/2025/09/15/market-growth</guid>
+<pubDate>Mon, 15 Sep 2025 13:40:00 +0300</pubDate>
+<category>Финансы</category>
+<description>
+<![CDATA[ Основные индексы Московской биржи завершили торговую сессию в плюсе на фоне позитивных новостей из корпоративного сектора. ]]>
+</description>
+</item>
+</channel>
+
+16. https://elementy.ru/rss/news
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Элементы - Новости науки</title>
+<link>https://elementy.ru</link>
+<description>Популярные новости науки, научные статьи и исследования</description>
+<language>ru</language>
+<atom:link href="https://elementy.ru/rss/news" rel="self" type="application/rss+xml"/>
+<item>
+<title>Астрономы обнаружили новую экзопланету в зоне обитаемости</title>
+<link>https://elementy.ru/news/2025/09/15/exoplanet-discovery</link>
+<guid>https://elementy.ru/news/2025/09/15/exoplanet-discovery</guid>
+<pubDate>Mon, 15 Sep 2025 13:00:00 +0300</pubDate>
+<category>Астрономия</category>
+<description>
+<![CDATA[ Международная группа исследователей сообщила об открытии планеты, расположенной в зоне обитаемости своей звезды, что делает её потенциально пригодной для жизни. ]]>
+</description>
+</item>
+</channel>
