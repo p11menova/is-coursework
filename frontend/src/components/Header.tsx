@@ -98,11 +98,11 @@ const Header: React.FC = () => {
                 <circle cx="10" cy="10" r="4" fill="#FFD700"/>
                 <path d="M10 2V4M10 16V18M18 10H16M4 10H2M15.6569 4.34314L14.2426 5.75736M5.75736 14.2426L4.34314 15.6569M15.6569 15.6569L14.2426 14.2426M5.75736 5.75736L4.34314 4.34314" stroke="#FFD700" strokeWidth="2"/>
               </svg>
-              <span className="temperature">+12</span>
+              <span className="temperature">-10</span>
             </div>
             <div className="currency-section">
               <span className="currency-symbol">$</span>
-              <span className="currency-value">87.23</span>
+              <span className="currency-value">78.23</span>
             </div>
           </div>
           <div className="profile-menu-container" ref={profileMenuRef}>

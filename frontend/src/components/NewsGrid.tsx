@@ -15,6 +15,7 @@ interface NewsGridProps {
 const colors = ['#2D5016', '#C8553D', '#3498DB', '#F1C40F', '#8B0000', '#9B59B6', '#E67E22'];
 
 const NewsGrid: React.FC<NewsGridProps> = ({ categories }) => {
+  
   if (!categories || categories.length === 0) {
     return <div className="no-news">Нет новостей. Подпишитесь на источники на странице источников.</div>;
   }

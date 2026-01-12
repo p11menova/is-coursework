@@ -1,30 +1,30 @@
-version: '3.8'
+# version: '3.8'
 
-services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: news-aggregator-postgres
-    environment:
-      POSTGRES_DB: news_aggregator
-      POSTGRES_USER: news_user
-      POSTGRES_PASSWORD: news_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U news_user -d news_aggregator"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - news-network
+# services:
+#   postgres:
+#     image: postgres:15-alpine
+#     container_name: news-aggregator-postgres
+#     environment:
+#       POSTGRES_DB: news_aggregator
+#       POSTGRES_USER: news_user
+#       POSTGRES_PASSWORD: news_password
+#     ports:
+#       - "5433:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U news_user -d news_aggregator"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - news-network
 
-networks:
-  news-network:
-    driver: bridge
+# networks:
+#   news-network:
+#     driver: bridge
 
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
 

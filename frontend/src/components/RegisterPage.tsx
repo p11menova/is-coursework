@@ -118,11 +118,9 @@ const RegisterPage: React.FC = () => {
                 {loading ? 'Регистрация...' : 'Зарегистрироваться'}
               </button>
               
-              <div className="login-link-container">
-                <span className="login-link-text">Уже есть аккаунт?</span>
-                <a href="#" className="login-link" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
-                  Войти
-                </a>
+              <div className="signup-container">
+                <span className="signup-text">Уже зарегистрированы?</span>
+                <a href="#" className="signup-link" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Войти</a>
               </div>
             </form>
           </div>

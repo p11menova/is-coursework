@@ -273,6 +273,30 @@ const predefinedTemplates = [
   }
 };*/
 
+const getSourceColor = (sourceName: string): string => {
+  const colors: { [key: string]: string } = {
+    "Хабр": "#65A3D9",
+    "Лента": "#F35C25",
+    "РИА Новости": "#1E50A2",
+    "BBC": "#B9001D",
+    "Дром": "#FF6B00",
+    "Колеса": "#0066CC",
+    "РБК": "#E53935",
+    "Коммерсантъ": "#1B3F8B",
+    "Ведомости": "#00A651",
+    "ТАСС": "#0039A6",
+    "Интерфакс": "#0055A4",
+    "Lenta.ru": "#F35C25",
+    "Meduza": "#FF6600",
+    "Forbes Russia": "#0078D4",
+    "Российская газета": "#C41230",
+    "Известия": "#003D7A",
+    "Московский комсомолец": "#ED1C24"
+  };
+  
+  return colors[sourceName] || "#667eea";
+};
+
 const SourcesPage: React.FC = () => {
   const navigate = useNavigate();
   const [sources, setSources] = useState<Source[]>([]);
@@ -379,7 +403,7 @@ const SourcesPage: React.FC = () => {
                 {subscribedSources.map((source) => (
                   <div key={source.sourceId} className="source-item">
                     <div className="source-info">
-                      <span className="source-name">{source.name}</span>
+                      <span className="source-name" style={{ color: getSourceColor(source.name) }}>{source.name}</span>
                       <span className="source-category">{source.categoryName}</span>
                     </div>
                     <button 
@@ -476,7 +500,7 @@ const SourcesPage: React.FC = () => {
                 {availableSources.map((source) => (
                   <div key={source.sourceId} className="source-item">
                     <div className="source-info">
-                      <span className="source-name">{source.name}</span>
+                      <span className="source-name" style={{ color: getSourceColor(source.name) }}>{source.name}</span>
                       <span className="source-category">{source.categoryName}</span>
                     </div>
                     <button 
