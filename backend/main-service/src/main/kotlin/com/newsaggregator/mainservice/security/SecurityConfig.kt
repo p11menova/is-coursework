@@ -43,10 +43,17 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:5173", "http://localhost:3000")
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedOrigins = listOf(
+            "http://localhost:5173", 
+            "http://localhost:3000",
+            "https://editor.swagger.io",
+            "https://petstore.swagger.io",
+            "http://localhost:8080"
+        ) // Allow frontend origins and Swagger UI
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
+        configuration.exposedHeaders = listOf("Authorization", "Content-Type")
         
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)

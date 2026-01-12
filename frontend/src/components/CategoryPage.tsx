@@ -48,6 +48,23 @@ const CategoryPage: React.FC = () => {
     navigate('/');
   };
 
+  const handleSourceLinkClick = async (newsId: number, url: string) => {
+    // Отмечаем новость как прочитанную при клике на ссылку
+    try {
+      await newsAPI.markAsRead(newsId);
+      // Обновляем состояние статьи
+      setArticles(prev => prev.map(article => 
+        article.newsId === newsId 
+          ? { ...article, isRead: true }
+          : article
+      ));
+    } catch (error) {
+      console.error('Ошибка при отметке новости как прочитанной:', error);
+    }
+    // Открываем ссылку в новой вкладке
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="category-page">
       <Header />
@@ -69,7 +86,10 @@ const CategoryPage: React.FC = () => {
         ) : (
           <div className="articles-container">
             {articles.map((article) => (
-              <div key={article.newsId} className="article-preview">
+              <div 
+                key={article.newsId} 
+                className={`article-preview ${article.isRead ? 'article-read' : ''}`}
+              >
                 <div className="article-content">
                   {article.imageUrl && article.imageUrl.startsWith('http') ? (
                      <img src={article.imageUrl} alt={article.sourceName} className="article-logo" onError={(e) => {
@@ -88,6 +108,10 @@ const CategoryPage: React.FC = () => {
                       className="source-link"
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSourceLinkClick(article.newsId, article.url);
+                      }}
                     >
                       Читать в оригинальном источнике
                     </a>

@@ -1,0 +1,702 @@
+openapi: 3.0.3
+info:
+  title: News Aggregator API
+  description: |
+    REST API для агрегатора новостей. Позволяет пользователям регистрироваться, 
+    подписываться на RSS-источники, просматривать новости по категориям и управлять шаблонами источников.
+  version: 1.0.0
+  
+
+servers:
+  - url: http://localhost:8080/api
+    description: Локальный сервер разработки
+
+
+tags:
+  - name: Authentication
+    description: Аутентификация и регистрация пользователей
+  - name: Password Reset
+    description: Восстановление пароля
+  - name: News
+    description: Управление новостями
+  - name: Sources
+    description: Управление источниками новостей
+  - name: Templates
+    description: Управление шаблонами источников
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Регистрация нового пользователя
+      description: Создает новый аккаунт пользователя
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              login: "user123"
+              email: "user@example.com"
+              password: "SecurePassword123!"
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                userId: 1
+                login: "user123"
+                email: "user@example.com"
+        '400':
+          description: Неверные данные запроса (логин или email уже существует)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Пользователь с таким логином уже существует"
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Вход в систему
+      description: Аутентификация пользователя и получение JWT токена
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              login: "user123"
+              password: "SecurePassword123!"
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                userId: 1
+                login: "user123"
+                email: "user@example.com"
+        '401':
+          description: Неверные учетные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Неверный логин или пароль"
+
+  /auth/password/forgot:
+    post:
+      tags:
+        - Password Reset
+      summary: Запрос восстановления пароля
+      description: Отправляет код восстановления на email пользователя
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+            example:
+              email: "user@example.com"
+      responses:
+        '200':
+          description: Код восстановления отправлен на email
+        '400':
+          description: Пользователь с таким email не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Пользователь с таким email не найден"
+
+  /auth/password/reset:
+    post:
+      tags:
+        - Password Reset
+      summary: Сброс пароля
+      description: Устанавливает новый пароль с использованием кода восстановления
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+            example:
+              email: "user@example.com"
+              code: "123456"
+              newPassword: "NewSecurePassword123!"
+      responses:
+        '200':
+          description: Пароль успешно изменен
+        '400':
+          description: Неверный код или код просрочен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Неверный код восстановления"
+
+  /news:
+    get:
+      tags:
+        - News
+      summary: Получить все новости пользователя
+      description: Возвращает пагинированный список новостей из подписанных источников
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (начиная с 0)
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Размер страницы
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Список новостей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPage'
+              example:
+                content:
+                  - newsId: 1
+                    title: "Заголовок новости"
+                    content: "Содержание новости..."
+                    url: "https://example.com/news/1"
+                    imageUrl: "https://www.google.com/s2/favicons?domain=example.com&sz=64"
+                    publishedDate: "2026-01-12T18:00:00"
+                    sourceName: "Хабр"
+                    categoryName: "IT"
+                    isRead: false
+                totalElements: 100
+                totalPages: 5
+                size: 20
+                number: 0
+
+  /news/categories:
+    get:
+      tags:
+        - News
+      summary: Получить категории с новостями
+      description: Возвращает список категорий, в которых есть новости из подписанных источников
+      responses:
+        '200':
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryNewsResponse'
+              example:
+                - categoryName: "IT"
+                  summary: "Последние новости из мира технологий"
+                  latestNewsDate: "2026-01-12T18:00:00"
+                - categoryName: "Политика"
+                  summary: "Актуальные политические новости"
+                  latestNewsDate: "2026-01-12T17:30:00"
+
+  /news/category/{categoryName}:
+    get:
+      tags:
+        - News
+      summary: Получить новости по категории
+      description: Возвращает пагинированный список новостей из указанной категории
+      parameters:
+        - name: categoryName
+          in: path
+          required: true
+          description: Название категории
+          schema:
+            type: string
+            example: "IT"
+        - name: page
+          in: query
+          description: Номер страницы (начиная с 0)
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Размер страницы
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Список новостей категории
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPage'
+        '404':
+          description: Категория не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: "Категория не найдена: IT"
+
+  /news/{newsId}/read:
+    post:
+      tags:
+        - News
+      summary: Отметить новость как прочитанную
+      description: Помечает новость как прочитанную для текущего пользователя
+      parameters:
+        - name: newsId
+          in: path
+          required: true
+          description: ID новости
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Новость отмечена как прочитанная
+        '404':
+          description: Новость не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sources:
+    get:
+      tags:
+        - Sources
+      summary: Получить все источники
+      description: Возвращает список всех доступных источников. Если пользователь аутентифицирован, показывает статус подписки
+      security: []
+      responses:
+        '200':
+          description: Список источников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SourceResponse'
+              example:
+                - sourceId: 1
+                  name: "Хабр"
+                  url: "https://habr.com"
+                  categoryName: "IT"
+                  isSubscribed: true
+                - sourceId: 2
+                  name: "РБК"
+                  url: "https://rbc.ru"
+                  categoryName: "Финансы"
+                  isSubscribed: false
+
+  /sources/{sourceId}/subscribe:
+    post:
+      tags:
+        - Sources
+      summary: Подписаться на источник
+      description: Подписывает текущего пользователя на указанный источник
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          description: ID источника
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Успешно подписан на источник
+        '404':
+          description: Источник не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Sources
+      summary: Отписаться от источника
+      description: Отписывает текущего пользователя от указанного источника
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          description: ID источника
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Успешно отписан от источника
+        '404':
+          description: Источник не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /templates:
+    get:
+      tags:
+        - Templates
+      summary: Получить все шаблоны
+      description: Возвращает список всех доступных шаблонов источников
+      security: []
+      responses:
+        '200':
+          description: Список шаблонов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateResponse'
+              example:
+                - templateId: 1
+                  name: "Финансист"
+                  description: "Шаблон для финансовых и политических новостей"
+                  categoryName: "Финансы"
+                  sourceNames: ["РБК", "Ведомости"]
+                - templateId: 2
+                  name: "Программист"
+                  description: "Шаблон для программистов: IT и Наука"
+                  categoryName: null
+                  sourceNames: ["Хабр", "N+1", "Tproger", "Элементы"]
+
+  /templates/{templateId}/apply:
+    post:
+      tags:
+        - Templates
+      summary: Применить шаблон
+      description: Подписывает текущего пользователя на все источники из указанного шаблона
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          description: ID шаблона
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Шаблон успешно применен
+        '404':
+          description: Шаблон не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT токен, полученный при входе или регистрации
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - login
+        - email
+        - password
+      properties:
+        login:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: Уникальный логин пользователя
+          example: "user123"
+        email:
+          type: string
+          format: email
+          description: Email адрес пользователя
+          example: "user@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: Пароль пользователя
+          example: "SecurePassword123!"
+
+    LoginRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+          example: "user123"
+        password:
+          type: string
+          description: Пароль пользователя
+          example: "SecurePassword123!"
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT токен для аутентификации
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        userId:
+          type: integer
+          format: int64
+          description: ID пользователя
+          example: 1
+        login:
+          type: string
+          description: Логин пользователя
+          example: "user123"
+        email:
+          type: string
+          format: email
+          description: Email пользователя
+          example: "user@example.com"
+
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email адрес для восстановления пароля
+          example: "user@example.com"
+
+    ResetPasswordRequest:
+      type: object
+      required:
+        - email
+        - code
+        - newPassword
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email адрес пользователя
+          example: "user@example.com"
+        code:
+          type: string
+          pattern: '^[0-9]{6}$'
+          description: Код восстановления (6 цифр)
+          example: "123456"
+        newPassword:
+          type: string
+          minLength: 8
+          description: Новый пароль
+          example: "NewSecurePassword123!"
+
+    NewsResponse:
+      type: object
+      properties:
+        newsId:
+          type: integer
+          format: int64
+          description: ID новости
+          example: 1
+        title:
+          type: string
+          description: Заголовок новости
+          example: "Заголовок новости"
+        content:
+          type: string
+          description: Содержание новости (очищенный HTML)
+          example: "Содержание новости..."
+        url:
+          type: string
+          format: uri
+          description: URL оригинальной новости
+          example: "https://example.com/news/1"
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: URL логотипа источника
+          example: "https://www.google.com/s2/favicons?domain=example.com&sz=64"
+        publishedDate:
+          type: string
+          format: date-time
+          description: Дата публикации
+          example: "2026-01-12T18:00:00"
+        sourceName:
+          type: string
+          description: Название источника
+          example: "Хабр"
+        categoryName:
+          type: string
+          description: Название категории
+          example: "IT"
+        isRead:
+          type: boolean
+          default: false
+          description: Прочитана ли новость пользователем
+          example: false
+
+    NewsPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsResponse'
+        totalElements:
+          type: integer
+          format: int64
+          description: Общее количество элементов
+          example: 100
+        totalPages:
+          type: integer
+          description: Общее количество страниц
+          example: 5
+        size:
+          type: integer
+          description: Размер страницы
+          example: 20
+        number:
+          type: integer
+          description: Номер текущей страницы (начиная с 0)
+          example: 0
+        first:
+          type: boolean
+          description: Первая ли это страница
+          example: true
+        last:
+          type: boolean
+          description: Последняя ли это страница
+          example: false
+
+    CategoryNewsResponse:
+      type: object
+      properties:
+        categoryName:
+          type: string
+          description: Название категории
+          example: "IT"
+        summary:
+          type: string
+          description: Краткое описание (заголовок последней новости)
+          example: "Последние новости из мира технологий"
+        latestNewsDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: Дата последней новости в категории
+          example: "2026-01-12T18:00:00"
+
+    SourceResponse:
+      type: object
+      properties:
+        sourceId:
+          type: integer
+          format: int64
+          description: ID источника
+          example: 1
+        name:
+          type: string
+          description: Название источника
+          example: "Хабр"
+        url:
+          type: string
+          format: uri
+          description: URL источника
+          example: "https://habr.com"
+        categoryName:
+          type: string
+          description: Название категории источника
+          example: "IT"
+        isSubscribed:
+          type: boolean
+          default: false
+          description: Подписан ли текущий пользователь на источник
+          example: true
+
+    TemplateResponse:
+      type: object
+      properties:
+        templateId:
+          type: integer
+          format: int64
+          description: ID шаблона
+          example: 1
+        name:
+          type: string
+          description: Название шаблона
+          example: "Финансист"
+        description:
+          type: string
+          nullable: true
+          description: Описание шаблона
+          example: "Шаблон для финансовых новостей"
+        categoryName:
+          type: string
+          nullable: true
+          description: Основная категория шаблона (если есть)
+          example: "Финансы"
+        sourceNames:
+          type: array
+          items:
+            type: string
+          description: Список названий источников в шаблоне
+          example: ["РБК", "Ведомости"]
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Сообщение об ошибке
+          example: "Пользователь не найден"
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки
+          example: "2026-01-12T18:00:00"
+
