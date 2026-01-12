@@ -1,0 +1,247 @@
+.header {
+  background: linear-gradient(135deg, MediumPurple 0%, #9370DB 100%);
+  padding: 0px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feather-logo {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  transform: rotate(0deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.feather-logo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: 'Marker Felt', fantasy;
+}
+
+.title {
+  font-size: 56px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  letter-spacing: -0.5px;
+  font-family: 'Marker Felt', fantasy;
+}
+
+.tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-weight: 400;
+  font-family: 'Marker Felt', fantasy;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.weather-currency-widget {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 7px 14px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.weather-section {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.temperature {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.currency-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.currency-symbol {
+  color: #FFD700;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.currency-value {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.user-icon {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  border-radius: 50%;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.user-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.user-icon.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.user-icon.disabled:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.profile-email {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #2D3748;
+  border-bottom: 1px solid #E2E8F0;
+  font-weight: 500;
+}
+
+.logout-button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: MediumPurple;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.logout-button:hover {
+  color: #9370DB;
+  text-decoration: underline;
+}
+
+.logout-button svg {
+  flex-shrink: 0;
+}
+
+.user-icon svg {
+  display: block;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  .header-left {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .feather-logo {
+    width: 112px;
+    height: 112px;
+  }
+  
+  .feather-logo svg {
+    width: 112px;
+    height: 112px;
+  }
+  
+  .title {
+    font-size: 48px;
+  }
+  
+  .tagline {
+    font-size: 13px;
+  }
+  
+  .weather-currency-widget {
+    gap: 14px;
+    padding: 5px 11px;
+  }
+  
+  .temperature,
+  .currency-symbol,
+  .currency-value {
+    font-size: 13px;
+  }
+  
+  .profile-dropdown {
+    min-width: 180px;
+    right: -10px;
+  }
+  
+  .profile-email,
+  .logout-button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

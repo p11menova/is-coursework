@@ -1,0 +1,45 @@
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 43px;
+  padding: 43px;
+  max-width: 1260px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+/* Эффект стопки бумаг с дополнительными тенями */
+.news-grid {
+  position: relative;
+}
+
+/* Добавляем контейнер для каждой карточки чтобы усилить эффект стопки */
+.news-grid > * {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Адаптивность для разных размеров экрана */
+@media (max-width: 1024px) {
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    padding: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 29px;
+    padding: 29px;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 22px;
+  }
+}
