@@ -264,10 +264,28 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
+  border: 2px solid transparent;
 }
 
 .template-item:hover {
   background-color: #E8E8E8;
+}
+
+.template-item.template-applied {
+  background-color: #F0FFF4;
+  border-color: #48BB78;
+}
+
+.template-item.template-partial {
+  background-color: #FFF5ED;
+  border-color: #ED8936;
+}
+
+.applied-button {
+  background-color: #48BB78 !important;
+  color: white !important;
+  cursor: default !important;
+  opacity: 0.8;
 }
 
 .template-info {

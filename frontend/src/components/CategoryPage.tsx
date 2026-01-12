@@ -1,45 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { newsAPI } from '../api/news';
 import './CategoryPage.css';
 
 interface Article {
-  id: number;
+  newsId: number;
   title: string;
   content: string;
-  source: string;
-  color: string;
+  url: string;
+  imageUrl?: string;
+  publishedDate: string;
+  sourceName: string;
+  categoryName: string;
+  isRead: boolean;
 }
-
-const mockArticles: Article[] = [
-  {
-    id: 1,
-    title: "Поездка в Египет",
-    content: "Я недавно вернулся из поездки в Египет и хочу поделиться своими впечатлениями. Это была моя первая поездка в эту страну, и я был поражен её красотой и богатой историей. Мы посетили пирамиды Гизы, храмы Луксора и плавали по Нилу. Египет - это место, где каждый камень рассказывает историю.\n\nВо время поездки мы остановились в небольшом бюджетном отеле недалеко от центра Каира. Несмотря на скромные условия, персонал был очень дружелюбным и всегда готов помочь. Завтраки включали традиционные египетские блюда, которые были очень вкусными.\n\nОсобенно запомнился поход на рынок Хан эль-Халили. Там можно купить всё что угодно - от специй до сувениров. Атмосфера на рынке невероятная - шум, запахи, люди со всего мира. Я обязательно вернусь в Египет снова!",
-    source: "https://example.com/egypt-trip",
-    color: "#2D5016"
-  },
-  {
-    id: 2,
-    title: "Поездка в Египет",
-    content: "Я недавно вернулся из поездки в Египет и хочу поделиться своими впечатлениями. Это была моя первая поездка в эту страну, и я был поражен её красотой и богатой историей. Мы посетили пирамиды Гизы, храмы Луксора и плавали по Нилу. Египет - это место, где каждый камень рассказывает историю.\n\nВо время поездки мы остановились в небольшом бюджетном отеле недалеко от центра Каира. Несмотря на скромные условия, персонал был очень дружелюбным и всегда готов помочь. Завтраки включали традиционные египетские блюда, которые были очень вкусными.\n\nОсобенно запомнился поход на рынок Хан эль-Халили. Там можно купить всё что угодно - от специй до сувениров. Атмосфера на рынке невероятная - шум, запахи, люди со всего мира. Я обязательно вернусь в Египет снова!",
-    source: "https://example.com/egypt-trip",
-    color: "#1E3A8A"
-  }
-];
 
 const CategoryPage: React.FC = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
   const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchArticles = async () => {
+      if (!categoryName) return;
+      
       try {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setArticles(mockArticles);
+        const response = await newsAPI.getNewsByCategory(categoryName, page, 20);
+        const newArticles = response.content || [];
+        setArticles(prev => page === 0 ? newArticles : [...prev, ...newArticles]);
+        setHasMore(!response.last);
       } catch (error) {
         console.error('Ошибка при загрузке статей:', error);
       } finally {
@@ -48,7 +42,7 @@ const CategoryPage: React.FC = () => {
     };
 
     fetchArticles();
-  }, []);
+  }, [categoryName, page]);
 
   const handleBackToMain = () => {
     navigate('/');
@@ -68,22 +62,29 @@ const CategoryPage: React.FC = () => {
           <h1 className="category-title">{decodeURIComponent(categoryName || '')}</h1>
         </div>
 
-        {loading ? (
+        {loading && page === 0 ? (
           <div className="loading">Загрузка статей...</div>
+        ) : articles.length === 0 ? (
+          <div className="no-articles">Нет новостей в этой категории</div>
         ) : (
           <div className="articles-container">
             {articles.map((article) => (
-              <div key={article.id} className="article-preview">
+              <div key={article.newsId} className="article-preview">
                 <div className="article-content">
-                  <div 
-                    className="article-image-placeholder" 
-                    style={{ backgroundColor: article.color }}
-                  ></div>
+                  {article.imageUrl && article.imageUrl.startsWith('http') ? (
+                     <img src={article.imageUrl} alt={article.sourceName} className="article-logo" onError={(e) => {
+                       e.currentTarget.style.display = 'none';
+                     }} />
+                   ) : null}
                   <div className="article-text">
                     <h3 className="article-title">{article.title}</h3>
-                    <p className="article-body">{article.content}</p>
+                    <p className="article-body">{article.content.substring(0, 500) + (article.content.length > 500 ? '...' : '')}</p>
+                    <div className="article-meta">
+                      <span className="article-source">{article.sourceName}</span>
+                      <span className="article-date">{new Date(article.publishedDate).toLocaleDateString('ru-RU')}</span>
+                    </div>
                     <a 
-                      href={article.source} 
+                      href={article.url} 
                       className="source-link"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -94,6 +95,15 @@ const CategoryPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            {hasMore && (
+              <button 
+                onClick={() => setPage(prev => prev + 1)} 
+                className="load-more-button"
+                disabled={loading}
+              >
+                {loading ? 'Загрузка...' : 'Загрузить еще'}
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { sourcesAPI } from '../api/sources';
+import { templatesAPI } from '../api/templates';
 import './SourcesPage.css';
 
 interface Source {
-  id: number;
+  sourceId: number;
   name: string;
-  icon: React.ReactNode;
+  url: string;
+  categoryName: string;
+  isSubscribed: boolean;
 }
 
 interface Template {
-  id: number;
+  templateId: number;
   name: string;
-  sources: string[];
-  color: string;
+  description?: string;
+  categoryName?: string;
+  sourceNames: string[];
 }
 
-const mockSources: Source[] = [
+// Удалено - используется API
+/*const mockSources: Source[] = [
   { 
     id: 1, 
     name: "Хабр", 
@@ -192,7 +198,7 @@ const predefinedTemplates = [
   }
 ];
 
-const getTemplateIcon = (templateName: string) => {
+/*const getTemplateIcon = (templateName: string) => {
   switch(templateName) {
     case "Айти":
       return (
@@ -265,70 +271,83 @@ const getTemplateIcon = (templateName: string) => {
         </svg>
       );
   }
-};
+};*/
 
 const SourcesPage: React.FC = () => {
   const navigate = useNavigate();
-  const [sources, setSources] = useState<Source[]>(mockSources);
-  const [templates, setTemplates] = useState<Template[]>(mockTemplates);
-  const [showAllSources, setShowAllSources] = useState(false);
-  const [showAllTemplates, setShowAllTemplates] = useState(false);
-  const [selectedSource, setSelectedSource] = useState("");
-  const [isSourceDropdownOpen, setIsSourceDropdownOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState("");
-  const [isTemplateDropdownOpen, setIsTemplateDropdownOpen] = useState(false);
+  const [sources, setSources] = useState<Source[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [sourcesData, templatesData] = await Promise.all([
+          sourcesAPI.getAllSources(),
+          templatesAPI.getAllTemplates()
+        ]);
+        setSources(sourcesData);
+        setTemplates(templatesData);
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Ошибка загрузки данных');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleBackToMain = () => {
     navigate('/');
   };
 
-  const handleDeleteSource = (id: number) => {
-    setSources(sources.filter(source => source.id !== id));
-  };
-
-  const handleAddSource = () => {
-    if (selectedSource && !sources.find(s => s.name === selectedSource)) {
-      const newSource: Source = {
-        id: Date.now(),
-        name: selectedSource,
-        icon: (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" fill="#667eea"/>
-            <path d="M12 6V18M6 12H18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-        )
-      };
-      setSources([...sources, newSource]);
-      setSelectedSource("");
-      setIsSourceDropdownOpen(false);
-    }
-  };
-
-  const handleDeleteTemplate = (id: number) => {
-    setTemplates(templates.filter(template => template.id !== id));
-  };
-
-  const handleAddTemplate = () => {
-    if (selectedTemplate) {
-      const templateConfig = predefinedTemplates.find(t => t.name === selectedTemplate);
-      
-      if (templateConfig && !templates.find(t => t.name === selectedTemplate)) {
-        const newTemplate: Template = {
-          id: Date.now(),
-          name: selectedTemplate,
-          sources: templateConfig.sources,
-          color: templateConfig.color
-        };
-
-        setTemplates([...templates, newTemplate]);
-        setSelectedTemplate("");
-        setIsTemplateDropdownOpen(false);
+  const handleToggleSource = async (sourceId: number, isSubscribed: boolean) => {
+    try {
+      if (isSubscribed) {
+        await sourcesAPI.unsubscribeFromSource(sourceId);
+      } else {
+        await sourcesAPI.subscribeToSource(sourceId);
       }
+      // Обновляем список источников
+      const data = await sourcesAPI.getAllSources();
+      setSources(data);
+      // Обновляем главную страницу через событие
+      window.dispatchEvent(new Event('sourcesUpdated'));
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка изменения подписки');
     }
   };
 
-  const displayedSources = showAllSources ? sources : sources.slice(0, 3);
-  const displayedTemplates = showAllTemplates ? templates : templates.slice(0, 3);
+  const handleApplyTemplate = async (templateId: number) => {
+    try {
+      await templatesAPI.applyTemplate(templateId);
+      // Обновляем список источников
+      const data = await sourcesAPI.getAllSources();
+      setSources(data);
+      // Обновляем главную страницу через событие
+      window.dispatchEvent(new Event('sourcesUpdated'));
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка применения шаблона');
+    }
+  };
+
+  const subscribedSources = sources.filter(s => s.isSubscribed);
+  const availableSources = sources.filter(s => !s.isSubscribed);
+  
+  // Проверяем, какие шаблоны применены (все источники шаблона подписаны)
+  const getTemplateStatus = (template: Template): 'applied' | 'partial' | 'none' => {
+    const templateSourceNames = new Set(template.sourceNames);
+    const subscribedSourceNames = new Set(subscribedSources.map(s => s.name));
+    
+    const subscribedCount = template.sourceNames.filter(name => subscribedSourceNames.has(name)).length;
+    
+    if (subscribedCount === 0) return 'none';
+    if (subscribedCount === template.sourceNames.length) return 'applied';
+    return 'partial';
+  };
 
   return (
     <div className="sources-page">
@@ -340,171 +359,135 @@ const SourcesPage: React.FC = () => {
           </button>
         </div>
         
+        {error && <div className="error-message">{error}</div>}
+        
         {/* Sources Section */}
         <div className="sources-section">
           <div className="section-header">
             <h1 className="section-title">Ваши источники</h1>
           </div>
 
-          <div className="sources-list">
-            {displayedSources.map((source) => (
-              <div key={source.id} className="source-item">
-                <div className="source-info">
-                  <span className="source-icon">{source.icon}</span>
-                  <span className="source-name">{source.name}</span>
-                </div>
-                <button 
-                  className="delete-button"
-                  onClick={() => handleDeleteSource(source.id)}
-                  title="Удалить источник"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 6L14 14M6 14L14 6" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {sources.length > 3 && (
-            <button 
-              className="show-all-button"
-              onClick={() => setShowAllSources(!showAllSources)}
-            >
-              {showAllSources ? "Скрыть" : "Показать полностью"}
-            </button>
-          )}
-
-          <div className="add-source-section">
-            <h2 className="add-source-title">Добавить новый источник</h2>
-            <div className="add-source-form">
-              <div className="dropdown-container">
-                <button 
-                  className="dropdown-button"
-                  onClick={() => setIsSourceDropdownOpen(!isSourceDropdownOpen)}
-                >
-                  {selectedSource || "Выберите источник"}
-                  <svg 
-                    className={`dropdown-arrow ${isSourceDropdownOpen ? 'open' : ''}`}
-                    width="12" height="8" viewBox="0 0 12 8" fill="none"
-                  >
-                    <path d="M1 1L6 6L11 1" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-                {isSourceDropdownOpen && (
-                  <div className="dropdown-menu">
-                    {availableSources.map((source) => (
-                      <div 
-                        key={source}
-                        className="dropdown-item"
-                        onClick={() => {
-                          setSelectedSource(source);
-                          setIsSourceDropdownOpen(false);
-                        }}
-                      >
-                        {source}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <button 
-                className="add-button"
-                onClick={handleAddSource}
-                disabled={!selectedSource}
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Templates Section */}
-        <div className="templates-section">
-          <div className="section-header">
-            <h1 className="section-title">Ваши шаблоны</h1>
-          </div>
-
-          <div className="templates-list">
-            {displayedTemplates.map((template) => (
-              <div key={template.id} className="template-item">
-                <div className="template-info">
-                  <div className="template-header">
-                    {getTemplateIcon(template.name)}
-                    <span className="template-name">{template.name}</span>
-                  </div>
-                  <div className="template-sources">
-                    {template.sources.join(", ")}
-                  </div>
-                </div>
-                <button 
-                  className="delete-button"
-                  onClick={() => handleDeleteTemplate(template.id)}
-                  title="Удалить шаблон"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 6L14 14M6 14L14 6" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {templates.length > 3 && (
-            <button 
-              className="show-all-button"
-              onClick={() => setShowAllTemplates(!showAllTemplates)}
-            >
-              {showAllTemplates ? "Скрыть" : "Показать полностью"}
-            </button>
-          )}
-
-          <div className="add-template-section">
-            <h2 className="add-template-title">Добавить новый шаблон</h2>
-            <div className="add-template-form">
-              <div className="form-row">
-                <div className="dropdown-container">
-                  <button 
-                    className="dropdown-button"
-                    onClick={() => setIsTemplateDropdownOpen(!isTemplateDropdownOpen)}
-                  >
-                    {selectedTemplate || "Выберите шаблон"}
-                    <svg 
-                      className={`dropdown-arrow ${isTemplateDropdownOpen ? 'open' : ''}`}
-                      width="12" height="8" viewBox="0 0 12 8" fill="none"
-                    >
-                      <path d="M1 1L6 6L11 1" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                  {isTemplateDropdownOpen && (
-                    <div className="dropdown-menu">
-                      {predefinedTemplates
-                        .filter(template => !templates.find(t => t.name === template.name))
-                        .map((template) => (
-                        <div 
-                          key={template.name}
-                          className="dropdown-item"
-                          onClick={() => {
-                            setSelectedTemplate(template.name);
-                            setIsTemplateDropdownOpen(false);
-                          }}
-                        >
-                          {template.name}
-                        </div>
-                      ))}
+          {loading ? (
+            <div className="loading">Загрузка источников...</div>
+          ) : (
+            <>
+              <div className="sources-list">
+                {subscribedSources.map((source) => (
+                  <div key={source.sourceId} className="source-item">
+                    <div className="source-info">
+                      <span className="source-name">{source.name}</span>
+                      <span className="source-category">{source.categoryName}</span>
                     </div>
-                  )}
-                </div>
-                <button 
-                  className="add-button"
-                  onClick={handleAddTemplate}
-                  disabled={!selectedTemplate}
-                >
-                  +
-                </button>
+                    <button 
+                      className="delete-button"
+                      onClick={() => handleToggleSource(source.sourceId, true)}
+                      title="Отписаться"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 6L14 14M6 14L14 6" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
+
+              <div className="section-header">
+                <h2 className="section-title">Шаблоны источников</h2>
+                <p style={{ color: '#4A5568', fontSize: '16px', marginTop: '10px' }}>
+                  Выберите готовый набор источников для быстрой настройки
+                </p>
+              </div>
+
+              <div className="templates-list">
+                {templates.map((template) => {
+                  const status = getTemplateStatus(template);
+                  const isApplied = status === 'applied';
+                  const isPartial = status === 'partial';
+                  
+                  return (
+                    <div 
+                      key={template.templateId} 
+                      className={`template-item ${isApplied ? 'template-applied' : ''} ${isPartial ? 'template-partial' : ''}`}
+                    >
+                      <div className="template-info">
+                        <div className="template-header">
+                          <span className="template-name">{template.name}</span>
+                          {isApplied && (
+                            <span className="template-badge" style={{ 
+                              marginLeft: '10px',
+                              padding: '4px 8px',
+                              backgroundColor: '#48BB78',
+                              color: 'white',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontWeight: '600'
+                            }}>
+                              ✓ Применен
+                            </span>
+                          )}
+                          {isPartial && (
+                            <span className="template-badge" style={{ 
+                              marginLeft: '10px',
+                              padding: '4px 8px',
+                              backgroundColor: '#ED8936',
+                              color: 'white',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontWeight: '600'
+                            }}>
+                              Частично
+                            </span>
+                          )}
+                        </div>
+                        {template.description && (
+                          <div style={{ fontSize: '14px', color: '#4A5568', marginBottom: '8px' }}>
+                            {template.description}
+                          </div>
+                        )}
+                        <div className="template-sources">
+                          <strong>Источники:</strong> {template.sourceNames.join(', ')}
+                        </div>
+                      </div>
+                      <button 
+                        className={`add-button ${isApplied ? 'applied-button' : ''}`}
+                        onClick={() => handleApplyTemplate(template.templateId)}
+                        title={isApplied ? "Шаблон уже применен" : "Применить шаблон"}
+                        disabled={isApplied}
+                      >
+                        {isApplied ? '✓' : '✓'}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="section-header" style={{ marginTop: '40px' }}>
+                <h2 className="section-title">Доступные источники</h2>
+                <p style={{ color: '#4A5568', fontSize: '16px', marginTop: '10px' }}>
+                  Или выберите источники по отдельности
+                </p>
+              </div>
+
+              <div className="sources-list">
+                {availableSources.map((source) => (
+                  <div key={source.sourceId} className="source-item">
+                    <div className="source-info">
+                      <span className="source-name">{source.name}</span>
+                      <span className="source-category">{source.categoryName}</span>
+                    </div>
+                    <button 
+                      className="add-button"
+                      onClick={() => handleToggleSource(source.sourceId, false)}
+                      title="Подписаться"
+                    >
+                      +
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </div>

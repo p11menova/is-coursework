@@ -2,26 +2,31 @@ import React from 'react';
 import NewsCard from './NewsCard';
 import './NewsGrid.css';
 
-interface NewsItem {
-  id: number;
-  category: string;
+interface CategoryNews {
+  categoryName: string;
   summary: string;
-  color: string;
+  latestNewsDate?: string;
 }
 
 interface NewsGridProps {
-  news: NewsItem[];
+  categories: CategoryNews[];
 }
 
-const NewsGrid: React.FC<NewsGridProps> = ({ news }) => {
+const colors = ['#2D5016', '#C8553D', '#3498DB', '#F1C40F', '#8B0000', '#9B59B6', '#E67E22'];
+
+const NewsGrid: React.FC<NewsGridProps> = ({ categories }) => {
+  if (!categories || categories.length === 0) {
+    return <div className="no-news">Нет новостей. Подпишитесь на источники на странице источников.</div>;
+  }
+
   return (
     <div className="news-grid">
-      {news.map((item) => (
+      {categories.map((item, index) => (
         <NewsCard
-          key={item.id}
-          category={item.category}
+          key={item.categoryName}
+          category={item.categoryName}
           summary={item.summary}
-          color={item.color}
+          color={colors[index % colors.length]}
         />
       ))}
     </div>

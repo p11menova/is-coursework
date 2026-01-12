@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import NewsGrid from './components/NewsGrid';
 import SourcesPage from './components/SourcesPage';
@@ -8,70 +8,66 @@ import ForgotPasswordPage from './components/ForgotPasswordPage';
 import NewPasswordPage from './components/NewPasswordPage';
 import CategoryPage from './components/CategoryPage';
 import RegisterPage from './components/RegisterPage';
+import { newsAPI } from './api/news';
 import './App.css';
 
-const mockNewsData = [
-  {
-    id: 1,
-    category: "Название категории",
-    summary: "Коротко о главном в 2 предложения",
-    color: "#2D5016" // Темно-зеленый
-  },
-  {
-    id: 2,
-    category: "Название категории", 
-    summary: "Коротко о главном в 2 предложения",
-    color: "#C8553D" // Светло-красный
-  },
-  {
-    id: 3,
-    category: "Название категории",
-    summary: "Коротко о главном в 2 предложения", 
-    color: "#2D5016" // Темно-зеленый
-  },
-  {
-    id: 4,
-    category: "Название категории",
-    summary: "Коротко о главном в 2 предложения",
-    color: "#3498DB" // Синий
-  },
-  {
-    id: 5,
-    category: "Название категории",
-    summary: "Коротко о главном в 2 предложения",
-    color: "#F1C40F" // Желтый
-  },
-  {
-    id: 6,
-    category: "Название категории",
-    summary: "Коротко о главном в 2 предложения",
-    color: "#8B0000" // Темно-красный
-  }
-]
+// Защищенный роут
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/login" />;
+};
 
 function App() {
-  const [news, setNews] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
 
+  const fetchCategories = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true)
+      const data = await newsAPI.getCategories();
+      setCategories(data)
+    } catch (error) {
+      console.error('Ошибка при загрузке категорий:', error)
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setLoading(true)
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // В будущем здесь будет реальный API вызов
-        // const response = await fetch('/api/news')
-        // const data = await response.json()
-        
-        setNews(mockNewsData)
-      } catch (error) {
-        console.error('Ошибка при загрузке новостей:', error)
-      } finally {
-        setLoading(false)
+    fetchCategories()
+  }, [])
+
+  // Перезагружаем категории при возврате на главную страницу
+  useEffect(() => {
+    const handleFocus = () => {
+      if (window.location.pathname === '/') {
+        fetchCategories()
       }
     }
-
-    fetchNews()
+    window.addEventListener('focus', handleFocus)
+    
+    // Слушаем событие обновления источников
+    const handleSourcesUpdated = () => {
+      if (window.location.pathname === '/') {
+        fetchCategories()
+      }
+    }
+    window.addEventListener('sourcesUpdated', handleSourcesUpdated)
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('sourcesUpdated', handleSourcesUpdated)
+    }
   }, [])
 
   return (
@@ -79,28 +75,38 @@ function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={
-            <div className="app">
-              <Header />
-              <main className="main-content">
-                <div className="sources-link">
-                  <Link to="/sources" className="sources-link-text">
-                    Изменить список источников
-                  </Link>
-                </div>
-                {loading ? (
-                  <div className="loading">Загрузка новостей...</div>
-                ) : (
-                  <NewsGrid news={news} />
-                )}
-              </main>
-            </div>
+            <ProtectedRoute>
+              <div className="app">
+                <Header />
+                <main className="main-content">
+                  <div className="sources-link">
+                    <Link to="/sources" className="sources-link-text">
+                      Изменить список источников
+                    </Link>
+                  </div>
+                  {loading ? (
+                    <div className="loading">Загрузка новостей...</div>
+                  ) : (
+                    <NewsGrid categories={categories} />
+                  )}
+                </main>
+              </div>
+            </ProtectedRoute>
           } />
-          <Route path="/sources" element={<SourcesPage />} />
+          <Route path="/sources" element={
+            <ProtectedRoute>
+              <SourcesPage />
+            </ProtectedRoute>
+          } />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/new-password" element={<NewPasswordPage />} />
-          <Route path="/category/:categoryName" element={<CategoryPage />} />
+          <Route path="/category/:categoryName" element={
+            <ProtectedRoute>
+              <CategoryPage />
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </Router>

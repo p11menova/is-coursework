@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { authAPI } from '../api/auth';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет логика авторизации
-    console.log('Login attempt:', { email, password });
-    // Временно переходим на главную страницу
-    navigate('/');
+    setError('');
+    setLoading(true);
+    
+    try {
+      const response = await authAPI.login(login, password);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify({
+        userId: response.userId,
+        login: response.login,
+        email: response.email,
+      }));
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка входа. Проверьте логин и пароль.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgotPassword = (e: React.MouseEvent) => {
@@ -39,17 +55,19 @@ const LoginPage: React.FC = () => {
 
             <form className="login-form" onSubmit={handleLogin}>
               <div className="form-group">
-                <label htmlFor="email" className="form-label">Email</label>
+                <label htmlFor="login" className="form-label">Логин</label>
                 <input
-                  type="email"
-                  id="email"
+                  type="text"
+                  id="login"
                   className="form-input"
-                  placeholder="example@mail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Введите логин"
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
                   required
                 />
               </div>
+              
+              {error && <div className="error-message">{error}</div>}
 
               <div className="form-group">
                 <label htmlFor="password" className="form-label">Пароль</label>
@@ -64,8 +82,8 @@ const LoginPage: React.FC = () => {
                 />
               </div>
 
-              <button type="submit" className="login-button">
-                Войти
+              <button type="submit" className="login-button" disabled={loading}>
+                {loading ? 'Вход...' : 'Войти'}
               </button>
               
               <div className="forgot-password-container">

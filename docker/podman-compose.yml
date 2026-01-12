@@ -1,0 +1,109 @@
+version: '3.8'
+
+networks:
+  news_aggregator_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: news_aggregator_postgres
+    networks:
+      - news_aggregator_network
+    environment:
+      POSTGRES_DB: news_aggregator
+      POSTGRES_USER: news_user
+      POSTGRES_PASSWORD: news_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U news_user -d news_aggregator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  main-service:
+    build:
+      context: ../backend/main-service
+      dockerfile: Dockerfile
+    container_name: news_aggregator_main_service
+    networks:
+      - news_aggregator_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/news_aggregator
+      SPRING_DATASOURCE_USERNAME: news_user
+      SPRING_DATASOURCE_PASSWORD: news_password
+      JWT_SECRET: your-256-bit-secret-key-change-in-production-minimum-32-characters
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  email-service:
+    build:
+      context: ../backend/email-service
+      dockerfile: Dockerfile
+    container_name: news_aggregator_email_service
+    networks:
+      - news_aggregator_network
+    depends_on:
+      - postgres
+    environment:
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  rss-parser-service:
+    build:
+      context: ../backend/rss-parser-service
+      dockerfile: Dockerfile
+    container_name: news_aggregator_rss_parser_service
+    networks:
+      - news_aggregator_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/news_aggregator
+      SPRING_DATASOURCE_USERNAME: news_user
+      SPRING_DATASOURCE_PASSWORD: news_password
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: news_aggregator_frontend
+    networks:
+      - news_aggregator_network
+    depends_on:
+      - main-service
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: /api
+
+volumes:
+  postgres_data:
+

@@ -1,19 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { authAPI } from '../api/auth';
 import './NewPasswordPage.css';
 
 const NewPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('resetEmail');
+    const savedCode = localStorage.getItem('resetCode');
+    if (!savedEmail || !savedCode) {
+      navigate('/forgot-password');
+    } else {
+      setEmail(savedEmail);
+      setCode(savedCode);
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет логика сохранения нового пароля
-    console.log('Save new password:', { newPassword, confirmPassword });
-    // Перенаправляем на страницу логина
-    navigate('/login');
+    setError('');
+    
+    if (newPassword !== confirmPassword) {
+      setError('Пароли не совпадают');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      setError('Пароль должен быть не менее 6 символов');
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      await authAPI.resetPassword(email, code, newPassword);
+      localStorage.removeItem('resetEmail');
+      localStorage.removeItem('resetCode');
+      navigate('/login');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка сброса пароля. Проверьте код.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,6 +62,8 @@ const NewPasswordPage: React.FC = () => {
               <h1 className="new-password-title">Новый пароль</h1>
               <p className="new-password-subtitle">Введите новый пароль для вашего аккаунта</p>
             </div>
+            
+            {error && <div className="error-message">{error}</div>}
 
             <form className="new-password-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -54,8 +92,8 @@ const NewPasswordPage: React.FC = () => {
                 />
               </div>
 
-              <button type="submit" className="save-button">
-                Сохранить пароль
+              <button type="submit" className="save-button" disabled={loading}>
+                {loading ? 'Сохранение...' : 'Сохранить пароль'}
               </button>
             </form>
           </div>

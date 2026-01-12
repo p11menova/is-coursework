@@ -95,10 +95,25 @@
 }
 
 .article-image-placeholder {
-  width: 200px;
+  width: 150px;
   height: 150px;
   border-radius: 8px;
   flex-shrink: 0;
+}
+
+.article-logo {
+  width: 150px !important;
+  height: 150px !important;
+  min-width: 150px;
+  min-height: 150px;
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: contain;
+  background-color: #f0f0f0;
+  padding: 10px;
+  display: block;
 }
 
 .article-text {

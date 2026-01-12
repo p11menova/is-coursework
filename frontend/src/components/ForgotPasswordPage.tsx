@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { authAPI } from '../api/auth';
 import './ForgotPasswordPage.css';
 
 const ForgotPasswordPage: React.FC = () => {
@@ -10,6 +11,8 @@ const ForgotPasswordPage: React.FC = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [timer, setTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let interval: number;
@@ -23,22 +26,34 @@ const ForgotPasswordPage: React.FC = () => {
     return () => window.clearInterval(interval);
   }, [timer, canResend]);
 
-  const handleSendCode = (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canResend) return;
     
-    // Здесь будет логика отправки кода
-    console.log('Send code to:', email);
-    setCodeSent(true);
-    setCanResend(false);
-    setTimer(60);
+    setError('');
+    setLoading(true);
+    
+    try {
+      await authAPI.forgotPassword(email);
+      setCodeSent(true);
+      setCanResend(false);
+      setTimer(60);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка отправки кода. Проверьте email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyCode = (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет логика проверки кода
-    console.log('Verify code:', code);
-    // Перенаправляем на страницу нового пароля
+    if (!code) {
+      setError('Введите код');
+      return;
+    }
+    // Сохраняем email и код для страницы нового пароля
+    localStorage.setItem('resetEmail', email);
+    localStorage.setItem('resetCode', code);
     navigate('/new-password');
   };
 
@@ -58,6 +73,8 @@ const ForgotPasswordPage: React.FC = () => {
               <h1 className="forgot-password-title">Восстановление пароля</h1>
               <p className="forgot-password-subtitle">Введите email для восстановления доступа к аккаунту</p>
             </div>
+            
+            {error && <div className="error-message">{error}</div>}
 
             <form className="forgot-password-form" onSubmit={handleSendCode}>
               <div className="form-group">
@@ -76,9 +93,9 @@ const ForgotPasswordPage: React.FC = () => {
               <button 
                 type="submit" 
                 className="reset-button"
-                disabled={!canResend}
+                disabled={!canResend || loading}
               >
-                Отправить код
+                {loading ? 'Отправка...' : 'Отправить код'}
               </button>
             </form>
 

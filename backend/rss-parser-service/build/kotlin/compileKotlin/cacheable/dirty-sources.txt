@@ -1,0 +1,8 @@
+/app/src/main/kotlin/com/newsaggregator/rssparser/model/Source.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/scheduler/RssParserScheduler.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/controller/RssParserController.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/service/RssParserService.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/repository/SourceRepository.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/repository/NewsRepository.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/RssParserServiceApplication.kt
+/app/src/main/kotlin/com/newsaggregator/rssparser/model/News.kt

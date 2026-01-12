@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: rss-parser-service
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/news_aggregator}
+    username: ${SPRING_DATASOURCE_USERNAME:news_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:news_password}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+server:
+  port: 8082
+
+rss:
+  parser:
+    interval: 300000 # 5 minutes in milliseconds
+
+logging:
+  level:
+    root: INFO
+    com.newsaggregator: DEBUG
+

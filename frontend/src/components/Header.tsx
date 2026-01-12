@@ -8,8 +8,21 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const userEmail = "user@example.com"; // Заглушка email пользователя
-  const isLoginPage = location.pathname === '/login';
+  const [user, setUser] = useState<{ email?: string; login?: string } | null>(null);
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
+  
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -31,9 +44,9 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Закрываем меню
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsProfileMenuOpen(false);
-    // Перенаправляем на страницу логина
     navigate('/login');
   };
 
@@ -100,10 +113,10 @@ const Header: React.FC = () => {
               </svg>
             </div>
             
-            {!isLoginPage && isProfileMenuOpen && (
+            {!isLoginPage && user && isProfileMenuOpen && (
               <div className="profile-dropdown">
                 <div className="profile-email">
-                  {userEmail}
+                  {user.email || user.login}
                 </div>
                 <button className="logout-button" onClick={handleLogout}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '8px' }}>
