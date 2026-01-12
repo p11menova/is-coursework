@@ -82,10 +82,16 @@ class NewsService(
         // Получаем только новости из источников, на которые пользователь ПОДПИСАН
         val newsList = newsRepository.findNewsForUser(userId, Pageable.unpaged()).content
         
+        // Если нет новостей из подписанных источников, возвращаем пустой список
+        if (newsList.isEmpty()) {
+            return emptyList()
+        }
+        
         // Группируем по категориям и берем только те категории, у которых есть новости
         // Фильтруем только категории, где есть хотя бы одна новость из подписанных источников
         return newsList
             .groupBy { it.category.name }
+            .filter { (_, news) -> news.isNotEmpty() } // Дополнительная проверка на всякий случай
             .map { (categoryName, news) ->
                 val latestNews = news.maxByOrNull { it.publishedDate }
                 CategoryNewsResponse(

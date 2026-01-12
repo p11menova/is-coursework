@@ -56,17 +56,27 @@ function App() {
     }
     window.addEventListener('focus', handleFocus)
     
-    // Слушаем событие обновления источников
+    // Слушаем событие обновления источников - ВСЕГДА обновляем, даже если не на главной
     const handleSourcesUpdated = () => {
+      // Принудительно обновляем категории при изменении источников
+      fetchCategories()
+      // Если мы на главной странице, обновление уже произойдет
+      // Если нет - обновим при следующем переходе на главную
+    }
+    window.addEventListener('sourcesUpdated', handleSourcesUpdated)
+    
+    // Также слушаем событие при переходе на главную страницу
+    const handleLocationChange = () => {
       if (window.location.pathname === '/') {
         fetchCategories()
       }
     }
-    window.addEventListener('sourcesUpdated', handleSourcesUpdated)
+    window.addEventListener('popstate', handleLocationChange)
     
     return () => {
       window.removeEventListener('focus', handleFocus)
       window.removeEventListener('sourcesUpdated', handleSourcesUpdated)
+      window.removeEventListener('popstate', handleLocationChange)
     }
   }, [])
 

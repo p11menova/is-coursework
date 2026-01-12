@@ -314,8 +314,10 @@ const SourcesPage: React.FC = () => {
       // Обновляем список источников
       const data = await sourcesAPI.getAllSources();
       setSources(data);
-      // Обновляем главную страницу через событие
-      window.dispatchEvent(new Event('sourcesUpdated'));
+      // Обновляем главную страницу через событие - с небольшой задержкой для гарантии
+      setTimeout(() => {
+        window.dispatchEvent(new Event('sourcesUpdated'));
+      }, 100);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Ошибка изменения подписки');
     }
@@ -327,8 +329,10 @@ const SourcesPage: React.FC = () => {
       // Обновляем список источников
       const data = await sourcesAPI.getAllSources();
       setSources(data);
-      // Обновляем главную страницу через событие
-      window.dispatchEvent(new Event('sourcesUpdated'));
+      // Обновляем главную страницу через событие - с небольшой задержкой для гарантии
+      setTimeout(() => {
+        window.dispatchEvent(new Event('sourcesUpdated'));
+      }, 100);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Ошибка применения шаблона');
     }
